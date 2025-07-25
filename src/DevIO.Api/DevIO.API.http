@@ -1,0 +1,25 @@
+@DevIO.API_HostAddress = https://localhost:44365/api
+
+
+GET {{DevIO.API_HostAddress}}/suppliers
+Accept: application/json
+
+###
+POST {{DevIO.API_HostAddress}}/suppliers
+Accept: application/json
+
+{
+  "Name": "Marco",
+  "Document": "12345678910",
+  "Type": 1,
+  "Active": true,
+  "Address": {
+    "Street": "Rua Carlos Delgado Guerra Pinto",
+    "Number": "370",
+    "Complement": "Casa",
+    "Neighborhood": "Jardim Camburi",
+    "ZipCode": "29090040",
+    "City": "Vitoria",
+    "State": "ES"
+  }
+}
