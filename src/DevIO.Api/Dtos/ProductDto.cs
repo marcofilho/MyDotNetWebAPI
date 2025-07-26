@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace DevIO.Api.Dtos
 {
@@ -33,5 +34,6 @@ namespace DevIO.Api.Dtos
 
         [ScaffoldColumn(false)]
         public string SupplierName { get; set; }
+
     }
 }

@@ -32,25 +32,60 @@ namespace DevIO.Api.Controllers
             var productDto = await GetProduct(id);
             if (productDto == null) return NotFound();
 
-            return CustomResponse();
+            return CustomResponse(productDto);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(ProductDto productDto)
+        public async Task<IActionResult> Create(ProductDto productDto)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
             var fileName = Guid.NewGuid() + "_" + productDto.Image;
-
             if (!UploadFile(productDto.ImageUpload, fileName))
             {
-                return CustomResponse();
+                return CustomResponse(productDto);
             }
 
             productDto.Image = fileName;
             await _productService.Add(_mapper.Map<Product>(productDto));
 
             return CustomResponse(productDto);
+        }
+
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> Update(Guid id, ProductDto productDto)
+        {
+            if (id != productDto.Id)
+            {
+                NotifyError("The provided ID does not match the product ID.");
+                return CustomResponse(ModelState);
+            }
+
+            var productDtoUpdate = await GetProduct(id);
+            if (productDtoUpdate == null) return NotFound();
+
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+            if (productDto.ImageUpload != null)
+            {
+                var fileName = Guid.NewGuid() + "_" + productDto.Image;
+                if (!UploadFile(productDto.ImageUpload, fileName))
+                {
+                    return CustomResponse(ModelState);
+                }
+
+                productDtoUpdate.Image = fileName;
+            }
+
+
+            productDtoUpdate.Name = productDto.Name;
+            productDtoUpdate.Description = productDto.Description;
+            productDtoUpdate.Price = productDto.Price;
+            productDtoUpdate.Active = productDto.Active;
+
+            await _productService.Update(_mapper.Map<Product>(productDtoUpdate));
+
+            return CustomResponse(productDtoUpdate);
         }
 
         [HttpDelete("{id:guid}")]
@@ -63,25 +98,26 @@ namespace DevIO.Api.Controllers
             return CustomResponse();
         }
 
-        private bool UploadFile(string file, string imageName)
+        private bool UploadFile(string file, string fileName)
         {
-            var imageDataByteArray = Convert.FromBase64String(file);
-
             if (string.IsNullOrEmpty(file))
             {
-                NotifyError("Please provide an image to the product!");
+                NotifyError("Please provide an image!");
                 return false;
             }
 
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", imageName);
+            var imageDataByteArray = Convert.FromBase64String(file);
+
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fileName);
 
             if (System.IO.File.Exists(filePath))
             {
-                NotifyError("An image with this name already exists!");
+                NotifyError("This file already exists!");
                 return false;
             }
 
             System.IO.File.WriteAllBytes(filePath, imageDataByteArray);
+
             return true;
         }
 

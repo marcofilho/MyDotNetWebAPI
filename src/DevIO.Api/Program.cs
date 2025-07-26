@@ -33,14 +33,6 @@ namespace DevIO.API
                options.SuppressModelStateInvalidFilter = true;
             });
 
-            builder.Services.AddCors(options =>
-            {
-               options.AddPolicy("Development",
-                    builder => builder.AllowAnyOrigin()
-                                      .AllowAnyMethod()
-                                      .AllowAnyHeader()
-                                      .AllowCredentials());
-            });
 
             builder.Services.ResolveDependencies();
 

@@ -37,7 +37,7 @@ namespace DevIO.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(SupplierDto supplierDto)
+        public async Task<IActionResult> Create(SupplierDto supplierDto)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
