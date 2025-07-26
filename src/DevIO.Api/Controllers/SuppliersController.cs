@@ -19,28 +19,78 @@ namespace DevIO.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSuppliers()
+        public async Task<IActionResult> GetAll()
         {
             var suppliers = _mapper.Map<IEnumerable<SupplierDto>>(await _supplierService.GetAll());
             return Ok(suppliers);
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetById(Guid Id)
+        public async Task<IActionResult> GetById(Guid id)
         {
-            var suppliers = _mapper.Map<IEnumerable<SupplierDto>>(await _supplierService.GetAll());
+            var suppliers = await GetSupplierProductsAddress(id);
+            if (suppliers == null) return NotFound();
+
             return Ok(suppliers);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddSupplier(SupplierDto supplierDto)
+        public async Task<IActionResult> Add(SupplierDto supplierDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var supplier = _mapper.Map<Supplier>(supplierDto);
-            await _supplierService.Add(supplier);
+            var result = await _supplierService.Add(supplier);
 
-            return CreatedAtAction(nameof(GetSuppliers), new { id = supplier.Id }, supplierDto);
+            if (!result) return BadRequest();
+
+            return Ok(supplier);
+        }
+
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> Update(Guid id, SupplierDto supplierDto)
+        {
+            if (id != supplierDto.Id) return BadRequest();
+
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var supplier = _mapper.Map<Supplier>(supplierDto);
+            var result = await _supplierService.Update(supplier);
+
+            if (!result) return BadRequest();
+
+            return Ok(supplier);
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var supplier = await GetSupplierAddress(id);
+            if (supplier == null) return NotFound();
+
+            var result = await _supplierService.Remove(supplier.Id);
+
+            if (!result) return BadRequest();
+
+            return Ok(supplier);
+        }
+
+        private async Task<SupplierDto> GetSupplierProductsAddress(Guid id)
+        {
+            var supplier = await _supplierService.GetSupplierProductsAddress(id);
+            if (supplier == null) return null;
+            
+            return _mapper.Map<SupplierDto>(supplier);
+        }
+
+        private async Task<SupplierDto> GetSupplierAddress(Guid id)
+        {
+            var supplier = await _supplierService.GetSupplierAddress(id);
+            if (supplier == null) return null;
+            
+            return _mapper.Map<SupplierDto>(supplier);
         }
     }
 }

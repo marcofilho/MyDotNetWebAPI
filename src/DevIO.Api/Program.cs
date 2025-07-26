@@ -1,5 +1,6 @@
 using DevIO.Api.Configurations;
 using DevIO.Data.Context;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace DevIO.API
@@ -21,18 +22,21 @@ namespace DevIO.API
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            // Add services to the container.
             builder.Services.AddAuthorization();
 
             builder.Services.AddAutoMapper(typeof(Program));
 
             builder.Services.AddApiConfig();
 
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+               options.SuppressModelStateInvalidFilter = true;
+            });
+
             builder.Services.ResolveDependencies();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             app.UseApiConfig(app.Environment);
 
             app.UseHttpsRedirection();

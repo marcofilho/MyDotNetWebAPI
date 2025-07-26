@@ -38,39 +38,41 @@ namespace DevIO.Business.Services
             return await _supplierRepository.GetSupplierProductsAddress(id);
         }
 
-        public async Task Add(Supplier supplier)
+        public async Task<bool> Add(Supplier supplier)
         {
             if (!ExecuteValidation(new SupplierValidation(), supplier) &&
-               !ExecuteValidation(new AddressValidation(), supplier.Address)) return;
+               !ExecuteValidation(new AddressValidation(), supplier.Address)) return false;
 
             if (_supplierRepository.FindAsync(s => s.Document == supplier.Document).Result.Any())
             {
                 Notify("A supplier with this document already exists.");
-                return;
+                return false;
             }
 
             await _supplierRepository.AddAsync(supplier);
+            return true;
         }
 
-        public async Task Update(Supplier supplier)
+        public async Task<bool> Update(Supplier supplier)
         {
-            if (!ExecuteValidation(new SupplierValidation(), supplier)) return;
+            if (!ExecuteValidation(new SupplierValidation(), supplier)) return false;
 
             if (_supplierRepository.FindAsync(s => s.Document == supplier.Document && s.Id != supplier.Id).Result.Any())
             {
                 Notify("A supplier with this document already exists.");
-                return;
+                return false;
             }
 
             await _supplierRepository.UpdateAsync(supplier);
+            return true;
         }
 
-        public async Task Remove(Guid id)
+        public async Task<bool> Remove(Guid id)
         {
             if (_supplierRepository.GetSupplierProductsAddress(id).Result.Products.Any())
             {
                 Notify("The supplier has registered products!");
-                return;
+                return false;
             }
 
             var address = await _addressRepository.GetAddressBySupplier(id);
@@ -81,6 +83,7 @@ namespace DevIO.Business.Services
             }
 
             await _supplierRepository.RemoveAsync(id);
+            return true;
         }
 
         public async Task UpdateAddress(Address address)
