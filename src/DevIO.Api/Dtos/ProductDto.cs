@@ -19,6 +19,7 @@ namespace DevIO.Api.Dtos
         public string Description { get; set; }
 
         public string ImageUpload { get; set; }
+
         public string Image { get; set; }
 
         [Required(ErrorMessage = "The field {0} is required.")]
@@ -27,6 +28,7 @@ namespace DevIO.Api.Dtos
         [ScaffoldColumn(false)]
         public DateTime CreatedAt { get; set; }
 
+        [Required(ErrorMessage = "The field {0} is required.")]
         public bool Active { get; set; }
 
         [ScaffoldColumn(false)]

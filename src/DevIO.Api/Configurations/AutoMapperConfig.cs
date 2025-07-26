@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using DevIO.Api.Dtos;
-using DevIO.Api.DTOs;
 using DevIO.Business.Models;
 
 namespace DevIO.Api.Configurations
@@ -11,7 +10,11 @@ namespace DevIO.Api.Configurations
         {
             CreateMap<Supplier, SupplierDto>().ReverseMap();
             CreateMap<Address, AddressDto>().ReverseMap();
-            CreateMap<Product, ProductDto>().ReverseMap();
+            CreateMap<ProductDto, Product>();
+
+            CreateMap<Product, ProductDto>()
+                .ForMember(dest => dest.SupplierName, opt => opt.MapFrom(src => src.Supplier.Name));
+
         }
     }
 }

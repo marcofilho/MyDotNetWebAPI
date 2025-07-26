@@ -1,7 +1,6 @@
-﻿using DevIO.Api.Dtos;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace DevIO.Api.DTOs
+namespace DevIO.Api.Dtos
 {
     public class SupplierDto
     {

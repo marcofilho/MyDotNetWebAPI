@@ -6,12 +6,17 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Content Remove="wwwroot\images\8996d13e-59de-4ca5-ad5f-fc93cc200ab5_" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\DevIO.Business\DevIO.Business.csproj" />
 		<ProjectReference Include="..\DevIO.Data\DevIO.Data.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Folder Include="Extensions\" />
+		<Folder Include="wwwroot\images\" />
 	</ItemGroup>
 
 	<ItemGroup>

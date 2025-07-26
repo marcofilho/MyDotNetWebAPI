@@ -33,11 +33,22 @@ namespace DevIO.API
                options.SuppressModelStateInvalidFilter = true;
             });
 
+            builder.Services.AddCors(options =>
+            {
+               options.AddPolicy("Development",
+                    builder => builder.AllowAnyOrigin()
+                                      .AllowAnyMethod()
+                                      .AllowAnyHeader()
+                                      .AllowCredentials());
+            });
+
             builder.Services.ResolveDependencies();
 
             var app = builder.Build();
 
             app.UseApiConfig(app.Environment);
+
+            app.UseCors("Development");
 
             app.UseHttpsRedirection();
 

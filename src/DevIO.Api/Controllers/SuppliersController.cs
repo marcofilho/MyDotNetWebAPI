@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DevIO.Api.DTOs;
+using DevIO.Api.Dtos;
 using DevIO.Business.Interfaces;
 using DevIO.Business.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -10,11 +10,13 @@ namespace DevIO.Api.Controllers
     public class SuppliersController : MainController
     {
         private readonly ISupplierService _supplierService;
+        private readonly IAddressService _addressService;
         private readonly IMapper _mapper;
 
-        public SuppliersController(ISupplierService supplierService, IMapper mapper, INotificator notificator) : base(notificator)
+        public SuppliersController(ISupplierService supplierService, IAddressService adressService, IMapper mapper, INotificator notificator) : base(notificator)
         {
             _supplierService = supplierService;
+            _addressService = adressService;
             _mapper = mapper;
         }
 
@@ -37,51 +39,71 @@ namespace DevIO.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(SupplierDto supplierDto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
 
-            var supplier = _mapper.Map<Supplier>(supplierDto);
-            var result = await _supplierService.Add(supplier);
+            await _supplierService.Add(_mapper.Map<Supplier>(supplierDto));
 
-            if (!result) return BadRequest();
-
-            return Ok(supplier);
+            return CustomResponse(supplierDto);
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Update(Guid id, SupplierDto supplierDto)
+        public async Task<IActionResult> Update(Guid id, [FromBody] SupplierDto supplierDto)
         {
-            if (id != supplierDto.Id) return BadRequest();
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
 
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (id != supplierDto.Id)
+            {
+                NotifyError("The IDs informed do not match.");
+                return CustomResponse(supplierDto);
+            }
 
-            var supplier = _mapper.Map<Supplier>(supplierDto);
-            var result = await _supplierService.Update(supplier);
+            await _supplierService.Update(_mapper.Map<Supplier>(supplierDto));
 
-            if (!result) return BadRequest();
-
-            return Ok(supplier);
+            return CustomResponse(supplierDto);
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
             var supplier = await GetSupplierAddress(id);
+
             if (supplier == null) return NotFound();
 
-            var result = await _supplierService.Remove(supplier.Id);
+            await _supplierService.Remove(supplier.Id);
 
-            if (!result) return BadRequest();
+            return CustomResponse();
+        }
 
-            return Ok(supplier);
+        [HttpGet("get-address/{id:guid}")]
+        public async Task<IActionResult> GetAddressById(Guid id)
+        {
+            var addressDto = _mapper.Map<AddressDto>(await _addressService.GetById(id));
+            if (addressDto == null) return NotFound();
+
+            return CustomResponse(addressDto);
+        }
+
+        [HttpPut("update-address/{id:guid}")]
+        public async Task<IActionResult> UpdateAddress(Guid id, [FromBody] AddressDto addressDto)
+        {
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+            if (id != addressDto.Id)
+            {
+                NotifyError("The IDs informed do not match.");
+                return CustomResponse(addressDto);
+            }
+
+            await _supplierService.UpdateAddress(_mapper.Map<Address>(addressDto));
+
+            return CustomResponse(addressDto);
         }
 
         private async Task<SupplierDto> GetSupplierProductsAddress(Guid id)
         {
             var supplier = await _supplierService.GetSupplierProductsAddress(id);
             if (supplier == null) return null;
-            
+
             return _mapper.Map<SupplierDto>(supplier);
         }
 
@@ -89,7 +111,7 @@ namespace DevIO.Api.Controllers
         {
             var supplier = await _supplierService.GetSupplierAddress(id);
             if (supplier == null) return null;
-            
+
             return _mapper.Map<SupplierDto>(supplier);
         }
     }

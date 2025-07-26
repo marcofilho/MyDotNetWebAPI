@@ -27,7 +27,6 @@ namespace DevIO.Business.Services
             return await _supplierRepository.GetByIdAsync(id);
         }
 
-
         public async Task<Supplier> GetSupplierAddress(Guid id)
         {
             return await _supplierRepository.GetSupplierAddress(id);
@@ -40,7 +39,7 @@ namespace DevIO.Business.Services
 
         public async Task<bool> Add(Supplier supplier)
         {
-            if (!ExecuteValidation(new SupplierValidation(), supplier) &&
+            if (!ExecuteValidation(new SupplierValidation(), supplier) ||
                !ExecuteValidation(new AddressValidation(), supplier.Address)) return false;
 
             if (_supplierRepository.FindAsync(s => s.Document == supplier.Document).Result.Any())
