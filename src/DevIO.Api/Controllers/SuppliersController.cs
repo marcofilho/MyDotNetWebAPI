@@ -2,10 +2,12 @@
 using DevIO.Api.Dtos;
 using DevIO.Business.Interfaces;
 using DevIO.Business.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevIO.Api.Controllers
 {
+    [Authorize]
     [Route("api/suppliers")]
     public class SuppliersController : MainController
     {
@@ -20,6 +22,7 @@ namespace DevIO.Api.Controllers
             _mapper = mapper;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -30,10 +33,10 @@ namespace DevIO.Api.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var suppliers = await GetSupplierProductsAddress(id);
-            if (suppliers == null) return NotFound();
+            var supplier = await GetSupplierProductsAddress(id);
+            if (supplier == null) return NotFound();
 
-            return Ok(suppliers);
+            return Ok(supplier);
         }
 
         [HttpPost]

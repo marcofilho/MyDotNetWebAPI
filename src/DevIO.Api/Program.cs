@@ -26,13 +26,14 @@ namespace DevIO.API
 
             builder.Services.AddAutoMapper(typeof(Program));
 
+            builder.Services.AddIdentityConfiguration(builder.Configuration);
+
             builder.Services.AddApiConfig();
 
             builder.Services.Configure<ApiBehaviorOptions>(options =>
             {
                options.SuppressModelStateInvalidFilter = true;
             });
-
 
             builder.Services.ResolveDependencies();
 
