@@ -1,18 +1,24 @@
 ﻿using AutoMapper;
 using DevIO.Api.Dtos;
+using DevIO.Api.Extensions;
 using DevIO.Business.Interfaces;
 using DevIO.Business.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevIO.Api.Controllers
 {
+    [Authorize]
     [Route("api/products")]
     public class ProductsController : MainController
     {
         private readonly IProductService _productService;
         private readonly IMapper _mapper;
 
-        public ProductsController(IProductService productService, IMapper mapper, INotificator notificator) : base(notificator)
+        public ProductsController(IProductService productService,
+                                 IMapper mapper,
+                                 INotificator notificator,
+                                 IUser user) : base(notificator, user)
         {
             _productService = productService;
             _mapper = mapper;
@@ -35,6 +41,7 @@ namespace DevIO.Api.Controllers
             return CustomResponse(productDto);
         }
 
+        [ClaimsAuthorize("Product", "Create")]
         [HttpPost]
         public async Task<IActionResult> Create(ProductDto productDto)
         {
@@ -52,6 +59,7 @@ namespace DevIO.Api.Controllers
             return CustomResponse(productDto);
         }
 
+        [ClaimsAuthorize("Product", "Update")]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, ProductDto productDto)
         {
@@ -77,7 +85,6 @@ namespace DevIO.Api.Controllers
                 productDtoUpdate.Image = fileName;
             }
 
-
             productDtoUpdate.Name = productDto.Name;
             productDtoUpdate.Description = productDto.Description;
             productDtoUpdate.Price = productDto.Price;
@@ -88,6 +95,7 @@ namespace DevIO.Api.Controllers
             return CustomResponse(productDtoUpdate);
         }
 
+        [ClaimsAuthorize("Product", "Delete")]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {

@@ -16,7 +16,11 @@ namespace DevIO.Api.Controllers
         private readonly IAddressService _addressService;
         private readonly IMapper _mapper;
 
-        public SuppliersController(ISupplierService supplierService, IAddressService adressService, IMapper mapper, INotificator notificator) : base(notificator)
+        public SuppliersController(ISupplierService supplierService,
+                                   IAddressService adressService,
+                                   IMapper mapper,
+                                   INotificator notificator,
+                                   IUser user) : base(notificator, user)
         {
             _supplierService = supplierService;
             _addressService = adressService;
@@ -67,7 +71,7 @@ namespace DevIO.Api.Controllers
             return CustomResponse(supplierDto);
         }
 
-        [ClaimsAuthorize("Supplier", "Remove")]
+        [ClaimsAuthorize("Supplier", "Delete")]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {

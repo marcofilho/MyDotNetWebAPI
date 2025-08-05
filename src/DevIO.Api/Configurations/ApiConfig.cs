@@ -34,16 +34,15 @@ namespace DevIO.Api.Configurations
                         builder
                         .AllowAnyOrigin()
                         .AllowAnyMethod()
-                        .AllowAnyHeader());
-
-
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+                 
                 options.AddPolicy("Production",
                     builder =>
                         builder
                             .WithMethods("GET")
                             .WithOrigins("http://desenvolvedor.io")
                             .SetIsOriginAllowedToAllowWildcardSubdomains()
-                            //.WithHeaders(HeaderNames.ContentType, "x-custom-header")
                             .AllowAnyHeader());
             });
 
@@ -59,7 +58,7 @@ namespace DevIO.Api.Configurations
             }
             else
             {
-                app.UseCors("Development"); // Usar apenas nas demos => Configuração Ideal: Production
+                app.UseCors("Production");
                 app.UseHsts();
             }
 
