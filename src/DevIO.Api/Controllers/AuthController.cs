@@ -79,7 +79,7 @@ namespace DevIO.Api.Controllers
             return CustomResponse(loginUser);
         }
 
-        private async Task<string> GenerateJwtToken(string email)
+        private async Task<LoginResponseDto> GenerateJwtToken(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
             var claims = await _userManager.GetClaimsAsync(user);
@@ -97,8 +97,6 @@ namespace DevIO.Api.Controllers
             }
 
             var identityClaims = new ClaimsIdentity(claims);
-            //identityClaims.AddClaims(claims);
-
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
             var token = tokenHandler.CreateToken(new SecurityTokenDescriptor
@@ -110,7 +108,21 @@ namespace DevIO.Api.Controllers
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             });
 
-            return tokenHandler.WriteToken(token);
+            var encodedToken = tokenHandler.WriteToken(token);
+
+            var response = new LoginResponseDto
+            {
+                AccessToken = encodedToken,
+                ExpiresIn = TimeSpan.FromHours(_appSettings.Expiration).TotalSeconds,
+                UserToken = new UserTokenDto
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    Claims = claims.Select(c => new ClaimDto { Type = c.Type, Value = c.Value })
+                }
+            };
+
+            return response;
         }
 
         private static long ToUnixEpochDate(DateTime date)
