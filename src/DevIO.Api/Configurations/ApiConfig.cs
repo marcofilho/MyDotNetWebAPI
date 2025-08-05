@@ -8,18 +8,18 @@ namespace DevIO.Api.Configurations
         {
             services.AddControllers();
 
-            //services.AddApiVersioning(options =>
-            //{
-            //    options.AssumeDefaultVersionWhenUnspecified = true;
-            //    options.DefaultApiVersion = new ApiVersion(1, 0);
-            //    options.ReportApiVersions = true;
-            //});
+            services.AddApiVersioning(options =>
+            {
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.ReportApiVersions = true;
+            });
 
-            //services.AddVersionedApiExplorer(options =>
-            //{
-            //    options.GroupNameFormat = "'v'VVV";
-            //    options.SubstituteApiVersionInUrl = true;
-            //});
+            services.AddVersionedApiExplorer(options =>
+            {
+                options.GroupNameFormat = "'v'VVV";
+                options.SubstituteApiVersionInUrl = true;
+            });
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -34,9 +34,8 @@ namespace DevIO.Api.Configurations
                         builder
                         .AllowAnyOrigin()
                         .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials());
-                 
+                        .AllowAnyHeader());
+
                 options.AddPolicy("Production",
                     builder =>
                         builder

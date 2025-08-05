@@ -1,4 +1,5 @@
-﻿using DevIO.Api.Dtos;
+﻿using DevIO.Api.Controllers;
+using DevIO.Api.Dtos;
 using DevIO.Api.Extensions;
 using DevIO.Business.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -9,10 +10,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-
-namespace DevIO.Api.Controllers
+namespace DevIO.Api.V1.Controllers
 {
-    [Route("api")]
+    [ApiVersion("2.0")]
+    [ApiVersion("1.0", Deprecated = true)]
+    [Route("api/v{version:apiVersion}")]
     public class AuthController : MainController
     {
         private readonly SignInManager<IdentityUser> _signInManager;

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DevIO.Api.Controllers;
 using DevIO.Api.Dtos;
 using DevIO.Api.Extensions;
 using DevIO.Business.Interfaces;
@@ -6,10 +7,11 @@ using DevIO.Business.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DevIO.Api.Controllers
+namespace DevIO.Api.V1.Controllers
 {
     [Authorize]
-    [Route("api/suppliers")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/suppliers")]
     public class SuppliersController : MainController
     {
         private readonly ISupplierService _supplierService;
@@ -27,6 +29,7 @@ namespace DevIO.Api.Controllers
             _mapper = mapper;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
