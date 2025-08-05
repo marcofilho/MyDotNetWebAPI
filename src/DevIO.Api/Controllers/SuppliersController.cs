@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DevIO.Api.Dtos;
+using DevIO.Api.Extensions;
 using DevIO.Business.Interfaces;
 using DevIO.Business.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -22,7 +23,6 @@ namespace DevIO.Api.Controllers
             _mapper = mapper;
         }
 
-        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -39,6 +39,7 @@ namespace DevIO.Api.Controllers
             return Ok(supplier);
         }
 
+        [ClaimsAuthorize("Supplier", "Create")]
         [HttpPost]
         public async Task<IActionResult> Create(SupplierDto supplierDto)
         {
@@ -49,6 +50,7 @@ namespace DevIO.Api.Controllers
             return CustomResponse(supplierDto);
         }
 
+        [ClaimsAuthorize("Supplier", "Update")]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] SupplierDto supplierDto)
         {
@@ -65,6 +67,7 @@ namespace DevIO.Api.Controllers
             return CustomResponse(supplierDto);
         }
 
+        [ClaimsAuthorize("Supplier", "Remove")]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -86,6 +89,7 @@ namespace DevIO.Api.Controllers
             return CustomResponse(addressDto);
         }
 
+        [ClaimsAuthorize("Supplier", "Update")]
         [HttpPut("update-address/{id:guid}")]
         public async Task<IActionResult> UpdateAddress(Guid id, [FromBody] AddressDto addressDto)
         {

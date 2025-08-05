@@ -28,7 +28,7 @@ namespace DevIO.Api.Configurations
             services.Configure<AppSettings>(appSettingsSection);
 
             var appSettings = appSettingsSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(appSettings.Secret));
 
             services.AddAuthentication(options =>
             {
@@ -41,7 +41,7 @@ namespace DevIO.Api.Configurations
                 x.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    IssuerSigningKey = key,
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidAudience = appSettings.ValidIn,
