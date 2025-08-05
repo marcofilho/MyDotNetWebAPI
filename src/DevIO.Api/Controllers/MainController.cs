@@ -11,8 +11,8 @@ namespace DevIO.Api.Controllers
         private readonly INotificator _notificator;
         //public readonly IUser AppUser;
 
-        protected Guid UsuarioId { get; set; }
-        protected bool UsuarioAutenticado { get; set; }
+        protected Guid UserId { get; set; }
+        protected bool LoggedUser { get; set; }
 
         protected MainController(INotificator notificator)//,IUser appUser)
         {
@@ -26,14 +26,14 @@ namespace DevIO.Api.Controllers
             //}
         }
 
-        protected bool OperacaoValida()
+        protected bool IsValidOperation()
         {
             return !_notificator.HasNotification();
         }
 
         protected ActionResult CustomResponse(object result = null)
         {
-            if (OperacaoValida())
+            if (IsValidOperation())
             {
                 return Ok(new
                 {
