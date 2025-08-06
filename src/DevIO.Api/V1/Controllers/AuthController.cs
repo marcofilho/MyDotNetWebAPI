@@ -20,16 +20,19 @@ namespace DevIO.Api.V1.Controllers
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly AppSettings _appSettings;
+        private readonly ILogger<AuthController> _logger;
 
         public AuthController(INotificator notificator,
                               SignInManager<IdentityUser> signInManager,
                               UserManager<IdentityUser> userManager,
                               IOptions<AppSettings> appSettings,
-                              IUser user) : base(notificator, user)
+                              IUser user,
+                              ILogger<AuthController> logger) : base(notificator, user)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _appSettings = appSettings.Value;
+            _logger = logger;
         }
 
         [HttpPost("new-account")]
@@ -69,6 +72,7 @@ namespace DevIO.Api.V1.Controllers
 
             if (result.Succeeded)
             {
+                _logger.LogInformation($"User {loginUser.Email} logged in successfully.");
                 return CustomResponse(await GenerateJwtToken(loginUser.Email));
             }
 

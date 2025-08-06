@@ -30,6 +30,8 @@ namespace DevIO.API
 
             builder.Services.AddSwaggerConfig();
 
+            builder.Services.AddLoggingConfig(builder.Configuration);
+
             builder.Services.ResolveDependencies();
 
             var app = builder.Build();
@@ -38,6 +40,8 @@ namespace DevIO.API
             app.UseApiConfig(app.Environment);
 
             app.UseSwaggerConfig(apiVersionDescriptionProvider);
+
+            app.UseLoggingConfiguration();
 
             app.Run();
         }

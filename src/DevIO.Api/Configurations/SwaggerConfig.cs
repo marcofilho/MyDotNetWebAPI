@@ -16,7 +16,7 @@ namespace DevIO.Api.Configurations
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description = "Inform the JWT token on this format: Bearer {your token}",
+                    Description = "Please, provide the JWT token in this format: Bearer {your_token}",
                     Name = "Authorization",
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
